@@ -1,0 +1,16 @@
+<ul class="flex gap-3">
+  @for (periodico of periodicos(); track periodico.id) {
+    <li
+      class="rounded-full border border-gray-600 w-fit cursor-pointer p-1 hover:shadow-lg transition-all hover:border-gray-900"
+      [class.border-black]="seleccionados().includes(periodico.id)"
+      [class.opacity-40]="!seleccionados().includes(periodico.id) && seleccionados().length > 0"
+      (click)="handleClick(periodico)"
+    >
+      <img
+        class="w-8 h-8 object-contain object-center"
+        [src]="periodico.logo"
+        [alt]="periodico.nombre"
+      />
+    </li>
+  }
+</ul>

@@ -1,0 +1,22 @@
+<h2>Periodicos</h2>
+<a routerLink="/admin/periodicos/crear">Crear nuevo</a>
+<table class="text-left">
+  <thead>
+    <td></td>
+    <th>Nombre</th>
+    <th>URL</th>
+    <th>RSS</th>
+    <th></th>
+  </thead>
+  <tbody>
+    @for (periodico of periodicos(); track periodico.id) {
+      <tr>
+        <td><img src="{{periodico.logo}}" alt="logo"></td>
+        <td>{{ periodico.nombre }}</td>
+        <td>{{ periodico.url }}</td>
+        <td>{{ periodico.rss}}</td>
+        <td><a class="mr-3" [routerLink]="['/admin/periodicos', periodico.id, 'actualizar']">Actualizar</a><button (click)="handleDelete(periodico.id)">Eliminar</button></td>
+      </tr>
+    }
+  </tbody>
+</table>

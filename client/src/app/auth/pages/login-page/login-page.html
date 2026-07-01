@@ -1,0 +1,6 @@
+<p>login-page works!</p>
+<form class="flex flex-col gap-3 max-w-sm" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input formControlName="username" type="text" placeholder="username">
+    <input formControlName="password" type="password" placeholder="******">
+    <input type="submit" [disabled]="form.invalid" value="Iniciar sesión">
+</form>

@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+input, select, textarea {
+    @apply border p-1;
+}
+
+table{
+    @apply text-left;
+}
+
+table th, table td {
+    @apply p-1 px-2 border;
+}

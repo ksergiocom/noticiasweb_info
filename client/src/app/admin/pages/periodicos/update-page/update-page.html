@@ -1,0 +1,10 @@
+<h2>Actualizar periódico</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <input type="text" formControlName="nombre" placeholder="nombre">
+  <input type="text" formControlName="url" placeholder="url">
+  <input type="text" formControlName="logo" placeholder="logo">
+  <input type="text" formControlName="rss" placeholder="rss">
+
+  <button type="submit" [class.bg-gray-500]="form.invalid" [disabled]="form.invalid">Actualizar</button>
+  
+</form>

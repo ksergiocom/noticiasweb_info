@@ -1,0 +1,79 @@
+name: Deploy Noticiasweb.info
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Instalar Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Dar permisos a mvnw
+        working-directory: api
+        run: chmod +x mvnw
+
+      - name: Compilar API
+        working-directory: api
+        run: ./mvnw clean package -DskipTests
+
+      - name: Instalar Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Compilar Angular
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Preparar carpeta deploy
+        run: |
+          mkdir -p deploy
+          cp api/target/*bootable*.jar deploy/api-bootable.jar
+          cp -r frontend/dist deploy/frontend
+          cp -r scraper deploy/scraper
+
+      - name: Subir archivos por rsync
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+          REMOTE_USER: ${{ secrets.SERVER_USER }}
+          SOURCE: deploy/
+          TARGET: /home/sergio/java_angular_noticias/
+
+      - name: Reiniciar servidor
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/sergio/java_angular_noticias/scraper
+
+            python3 -m venv venv
+            ./venv/bin/pip install --upgrade pip
+
+            if [ -f requirements.txt ]; then
+              ./venv/bin/pip install -r requirements.txt
+            fi
+
+            sudo systemctl restart noticias-api
+            sudo systemctl restart noticias-scraper.timer
+            sudo systemctl start noticias-scraper.service
+            sudo systemctl reload nginx

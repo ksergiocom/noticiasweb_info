@@ -1,0 +1,46 @@
+<app-selector-periodicos
+  (periodicoToggle)="handlePeriodicoToggle($event)"
+  [periodicos]="periodicos()"
+  [seleccionados]="periodicoIdsSeleccionados()"
+>
+</app-selector-periodicos>
+
+<input (input)="updateTextoParaBuscar($event)" type="text" placeholder="¿Buscas algo concreto?" class="text-sm w-full max-w-xs mt-5 border border-gray-600 rounded-xs">
+
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5 mt-7">
+  @for (columna of columnas(); track $index) {
+    <div class="flex flex-col gap-5">
+      @for (noticia of columna; track noticia.id) {
+        <a [href]="noticia.url" target="_blank">
+          <article
+            class="group hover:border-gray-300 relative hover:shadow-lg transition-all border border-gray-200 p-3 shadow rounded-xs flex gap-5 items-center"
+          >
+            <img
+              class="w-14 z-10 bg-white h-6 absolute top-3 right-2 object-contain mb-auto"
+              [src]="noticia.periodico.logo"
+              [alt]="noticia.periodico.logo"
+            />
+            <div class="flex flex-col gap-2 w-full">
+              <h2 class="font-bold text-lg text-gray-700 group-hover:text-black mr-18">
+                {{ noticia.titulo }}
+              </h2>
+              <p class="text-gray-600 group-hover:text-gray-800 text-sm">
+                {{ recortar(noticia.descripcion) }}
+              </p>
+            </div>
+          </article>
+        </a>
+      }
+    </div>
+  }
+</section>
+
+<div #loadMoreTrigger class="h-10"></div>
+
+@if (haCargado() && !loading() && noticias().length === 0) {
+  <p class="text-center text-gray-500 my-10">No se han encontrado noticias</p>
+}
+
+@if (loading()) {
+  <p class="text-center text-gray-500 my-5">Cargando...</p>
+}
