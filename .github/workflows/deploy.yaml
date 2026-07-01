@@ -33,10 +33,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: client/package-lock.json
 
       - name: Compilar Angular
-        working-directory: frontend
+        working-directory: client
         run: |
           npm ci
           npm run build
@@ -45,7 +45,7 @@ jobs:
         run: |
           mkdir -p deploy
           cp api/target/*bootable*.jar deploy/api-bootable.jar
-          cp -r frontend/dist deploy/frontend
+          cp -r client/dist deploy/frontend
           cp -r scraper deploy/scraper
 
       - name: Subir archivos por rsync
